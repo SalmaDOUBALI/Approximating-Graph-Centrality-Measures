@@ -1,7 +1,7 @@
 using Flux, Wandb, Printf
 
 function train_model(config, train_data, test_data)
-    # Initialize Wandb Logger [cite: 53]
+    # Initialize Wandb Logger
     lg = WandbLogger(project="Approximating_Centrality", name=config["run_name"], config=config)
 
     # Prepare Data
@@ -9,7 +9,7 @@ function train_model(config, train_data, test_data)
     Y_train = hcat([d.Y for d in train_data]...)
     loader = Flux.DataLoader((X_train, Y_train), batchsize=config["batch_size"], shuffle=true)
 
-    # Setup Model: Designing lightweight MLP [cite: 53]
+    # Setup Model: Designing lightweight MLP
     model = build_mlp(1, config["hidden_size"])
     opt_state = Flux.setup(Flux.Adam(config["lr"]), model)
 
@@ -24,27 +24,27 @@ function train_model(config, train_data, test_data)
             total_loss += loss
         end
 
-        # --- UPDATED SECTION ---
-        # Evaluation on the first test graph to observe generalizability [cite: 79]
+        # --- EVALUATION SECTION ---
+        # Evaluation on the first test graph to observe generalizability
         test_sample = test_data[1]
         
-        # Call the new evaluation function that returns all 4 metrics
+        # Call the updated evaluation function
         results = evaluate_performance(model, test_sample.X, test_sample.Y, test_sample.bc_scores, 10)
 
-        # Log ALL metrics to Wandb to compare efficiency and accuracy [cite: 80]
+        # Log ALL metrics to Wandb including Kendall's Tau
         Wandb.log(lg, Dict(
             "loss" => total_loss / length(loader),
-            "accuracy" => results.accuracy,           # New!
+            "accuracy" => results.accuracy,
             "precision_at_10" => results.precision_k,
             "spearman_correlation" => results.spearman,
-            "inference_time_ms" => results.time_ms,   # New!
+            "kendall_tau" => results.kendall,        # Added to Wandb!
+            "inference_time_ms" => results.time_ms,
             "epoch" => epoch
         ))
-        # -----------------------
         
         if epoch % 10 == 0
-             @printf("Epoch %d | Loss: %.4f | Prec@10: %.2f | Time: %.2fms\n", 
-                     epoch, total_loss/length(loader), results.precision_k, results.time_ms)
+             @printf("Epoch %d | Loss: %.4f | Prec@10: %.2f | Spearman: %.2f | Kendall: %.2f\n", 
+                     epoch, total_loss/length(loader), results.precision_k, results.spearman, results.kendall)
         end
     end
     
