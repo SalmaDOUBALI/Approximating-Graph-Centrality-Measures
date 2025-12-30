@@ -10,8 +10,18 @@ function generate_graph_dataset(type::String, n_graphs::Int, n_nodes::Int, top_k
 
     for i in 1:n_graphs
         # Generate graph based on type
-        g = (type == "ER") ? erdos_renyi(n_nodes, prob) : barabasi_albert(n_nodes, 3)
-        
+        g = if type == "ER"
+            erdos_renyi(n_nodes, prob)
+        elseif type == "BA"
+            barabasi_albert(n_nodes, 3) # m=3 is a standard starting point
+        elseif type == "NWS"
+            newman_watts_strogatz(n_nodes, 4, 0.1) # k=4 neighbors, p=0.1 rewiring
+        elseif type == "SSF"
+            static_scale_free(n_nodes, n_nodes*2, 2.5) # 2n edges, gamma=2.5
+        else
+            error("Unknown graph type: $type")
+        end    
+            
         # Features: Normalized Degree [cite: 45]
         deg = degree(g)
         max_d = maximum(deg)
