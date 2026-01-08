@@ -1,5 +1,7 @@
 This project aims to design and train a lightweight MLP model to identify the most influential nodes in a network **without requiring a full, computationally expensive ranking**. 
+
 This Learning to Rank approach is designed to be as efficient as GNN-based models by utilizing only a single node feature: Node Degree. 
+
 The goal is to achieve an ideal balance between implementation simplicity and ranking accuracy, providing a fast alternative for isolating key influential nodes in large-scale graphs.
 
 #### **1. Model Architecture**
