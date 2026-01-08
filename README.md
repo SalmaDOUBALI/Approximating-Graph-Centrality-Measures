@@ -1,10 +1,12 @@
-This project aims to design and train a lightweight MLP model to identify the most influential nodes in a network without requiring a full, computationally expensive ranking. This Learning to Rank approach is designed to be as efficient as GNN-based models by utilizing only a single node feature: Node Degree. The goal is to achieve an ideal balance between implementation simplicity and ranking accuracy, providing a fast alternative for isolating key influential nodes in large-scale graphs.
+This project aims to design and train a lightweight MLP model to identify the most influential nodes in a network **without requiring a full, computationally expensive ranking**. 
+This Learning to Rank approach is designed to be as efficient as GNN-based models by utilizing only a single node feature: Node Degree. 
+The goal is to achieve an ideal balance between implementation simplicity and ranking accuracy, providing a fast alternative for isolating key influential nodes in large-scale graphs.
 
 #### **1. Model Architecture**
 
 The model consists of a Multi-Layer Perceptron (MLP). It utilizes a structure with:
 
-* **Input Layer:** Receives a single structural feature—the normalized node degree.
+* **Input Layer:** Receives a single structural feature. The normalized node degree.
 * **Hidden Layers:** For the current stage of this project, the model utilizes a single fully connected layer with ReLU activation to capture non-linear relationships between local topology and global centrality.
 * **Output Layer:** A simple binary classification head using a Softmax function that predicts the probability of a node belonging to the *top-k* set.
 
