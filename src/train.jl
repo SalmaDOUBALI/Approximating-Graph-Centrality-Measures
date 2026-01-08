@@ -31,13 +31,13 @@ function train_model(config, train_data, test_data)
         # Call the updated evaluation function
         results = evaluate_performance(model, test_sample.X, test_sample.Y, test_sample.bc_scores, 10)
 
-        # Log ALL metrics to Wandb including Kendall's Tau
+        # Log All metrics to Wandb 
         Wandb.log(lg, Dict(
             "loss" => total_loss / length(loader),
             "accuracy" => results.accuracy,
             "precision_at_10" => results.precision_k,
             "spearman_correlation" => results.spearman,
-            "kendall_tau" => results.kendall,        # Added to Wandb!
+            "kendall_tau" => results.kendall,        
             "inference_time_ms" => results.time_ms,
             "epoch" => epoch
         ))
