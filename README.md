@@ -48,4 +48,4 @@ The performance of this lightweight MLP approach will be benchmarked against GNN
 * **DRBC:** Directed Random Betweenness Centrality
 * **ABCDE:** Approximating BC ranking with progressive-DropEdge.
 
-The analysis focuses on whether a simple MLP, using only local features, can generalize across different graph scales and types with significantly lower computational overhead than GNN-based methods.
+The analysis focuses on whether a simple MLP, using only one local feature, can generalize across different graph scales and types with significantly lower computational overhead than GNN-based methods.
