@@ -21,7 +21,7 @@ The model consists of a Multi-Layer Perceptron (MLP). It utilizes a structure wi
 * **Evaluation Metrics:**
   * **Ranking Accuracy:** Spearman’s Rank Correlation and Kendall’s Tau.
   * **Top-K Precision:** Precision@K to measure the overlap between predicted and true influential nodes.
-  * **Efficiency:** Inference time in milliseconds (ms) and speedup ratio compared to exact algorithms.
+  * **Efficiency:** Inference time in milliseconds (ms).
 
 
 
