@@ -27,7 +27,9 @@ function train_model(config, train_data, test_data)
         # --- EVALUATION SECTION ---
         # Evaluation on the first test graph to observe generalizability
         test_sample = test_data[1]
-        
+        num_nodes = length(test_sample.bc_scores)
+
+        k_1percent = max(1, Int(round(0.01 * num_nodes)))
         # Call the updated evaluation function
         results = evaluate_performance(model, test_sample.X, test_sample.Y, test_sample.bc_scores, 10)
 
@@ -35,7 +37,7 @@ function train_model(config, train_data, test_data)
         Wandb.log(lg, Dict(
             "loss" => total_loss / length(loader),
             "accuracy" => results.accuracy,
-            "precision_at_10" => results.precision_k,
+            "top_1_percent_acc" => results.precision_k,
             "spearman_correlation" => results.spearman,
             "kendall_tau" => results.kendall,        
             "inference_time_ms" => results.time_ms,

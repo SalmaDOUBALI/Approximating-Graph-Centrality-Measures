@@ -32,10 +32,13 @@ function generate_graph_dataset(type::String, n_graphs::Int, n_nodes::Int, top_k
         
         # Labels: Binary Top-K 
         scores_sorted = sort(bc_scores, rev=true)
-        threshold = scores_sorted[min(top_k, n_nodes)]
+
+        k_1_percent = max(1, Int(floor(n_nodes * 0.01)))
+        threshold = scores_sorted[k_1_percent]
+
         is_top_k = bc_scores .>= threshold
         Y = Flux.onehotbatch(is_top_k, [true, false])
-
+        
         push!(dataset, (X=X, Y=Y, bc_scores=bc_scores, g=g))
         if i % 10 == 0 println("  -> Processed $i/$n_graphs graphs") end
     end
