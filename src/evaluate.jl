@@ -1,23 +1,14 @@
 using StatsBase, Dates
 
-"""
-This function calculates all evaluation metrics: 
-Precision@K, Spearman, Kendall's Tau, Accuracy, and Inference Time.
-"""
 function evaluate_performance(model, X, Y_true, bc_true, k)
-    # Inference Time:
-    # Measuring the time it takes for the model to predict
     start_time = time_ns()
     raw_output = model(X)
-    # Applying softmax to get probabilities for the "important" class
     probs = softmax(raw_output)[1, :]
     end_time = time_ns()
     
-    # Inference time in milliseconds
     inference_time_ms = (end_time - start_time) / 1e6
 
     # Classification Accuracy:
-    # Only calculate if we have ground-truth binary labels
     accuracy = 0.0
     if Y_true !== nothing
         predictions = probs .> 0.5
@@ -26,18 +17,15 @@ function evaluate_performance(model, X, Y_true, bc_true, k)
     end
 
     # Precision@K:
-    # Focus on the top-k most influential nodes
     top_k_pred_idx = sortperm(probs, rev=true)[1:k]
     true_top_k_idx = sortperm(bc_true, rev=true)[1:k]
     intersection = intersect(top_k_pred_idx, true_top_k_idx)
     precision_k = length(intersection) / k
 
-    # Rank Correlations:
-    # Spearman measures the correlation between ranks
+    # Spearman correlation 
     spearman_corr = corspearman(probs, bc_true)
     
-    # Kendall's Tau measures the strength of association between two ranked variables
-    # check if the model preserves the order of importance
+    # Kendall's Tau 
     kendall_corr = corkendall(probs, bc_true)
 
     return (

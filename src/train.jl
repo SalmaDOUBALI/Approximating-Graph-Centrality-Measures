@@ -1,15 +1,13 @@
 using Flux, Wandb, Printf
 
 function train_model(config, train_data, test_data)
-    # Initialize Wandb Logger
+
     lg = WandbLogger(project="Approximating_Centrality", name=config["run_name"], config=config)
 
-    # Prepare Data
     X_train = hcat([d.X for d in train_data]...)
     Y_train = hcat([d.Y for d in train_data]...)
     loader = Flux.DataLoader((X_train, Y_train), batchsize=config["batch_size"], shuffle=true)
 
-    # Setup Model: Designing lightweight MLP
     model = build_mlp(1, config["hidden_size"])
     opt_state = Flux.setup(Flux.Adam(config["lr"]), model)
 
@@ -24,16 +22,15 @@ function train_model(config, train_data, test_data)
             total_loss += loss
         end
 
-        # --- EVALUATION SECTION ---
-        # Evaluation on the first test graph to observe generalizability
+        
         test_sample = test_data[1]
         num_nodes = length(test_sample.bc_scores)
 
         k_1percent = max(1, Int(round(0.01 * num_nodes)))
-        # Call the updated evaluation function
+
         results = evaluate_performance(model, test_sample.X, test_sample.Y, test_sample.bc_scores, 10)
 
-        # Log All metrics to Wandb 
+        # Log evaluation metrics to Wandb 
         Wandb.log(lg, Dict(
             "loss" => total_loss / length(loader),
             "accuracy" => results.accuracy,
